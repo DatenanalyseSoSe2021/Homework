@@ -9,6 +9,8 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(titanic)
+library (MASS)
+library (ISLR)
 ```
 
 #### This homework is the absolute minimum extra work that you need to invest to keep up with the material in this course.
@@ -16,31 +18,44 @@ library(titanic)
 #### 1. Review your understanding of **linear regression** using the book [An Introduction to Statistical Learning](http://faculty.marshall.usc.edu/gareth-james/ISL/)
   * Read chapters 3.1, 3.2.1, 3.3.1 
   * Reproduce Lab Exercises 3.6.4 (Interaction Terms) and 3.6.6 (Qualitative Predictors)
+```{r}
+# 3.6.4 Interaction Terms
+summary (lm("medv~lstat*age" ,data=Boston ))
+
+# 3.6.6 Qualitative Predictors
+summary(lm(Sales ~ . +Income :Advertising +Price :Age ,data=Carseats ))
+```
 
 
 #### 2. Excercise 
 Load the `titanic` library and the `titanic_train` data. In the following we use `Survived` as the outcome (y):
+```{r echo = FALSE}
+options(digits = 3)
+titanic_train$Pclass = as.factor(titanic_train$Pclass)
+```
 
 ##### Fit a model containing the interactions between `Sex` and `Pclass`. Interpret the coefficients.
 ```{r echo = FALSE}
-lm.1=lm("Survived~Pclass*Sex",data = titanic_train)
-summary(lm("Survived~Pclass*Sex",data = titanic_train))
+alt.fit = "Survived~Pclass+Sex"
+lm.fit=lm("Survived~Pclass:Sex",data = titanic_train)
+summary(lm.fit)
+
 ```
 
 ###### Interpretation: 
-   - The P values for all Coefficients are very small, which indicates a relationship between the choosen predictor (interaction between `Pclass` and `Sex`)  and the response `Survived`  
-   - Any predictions on wether the passenger survived is going to deviate by 0.38 units (on average). The _lack of fit_ of the model is 0.38
-   - Overall, the model has an R-squared from 0.3806. This tells us that 38.06% of the variability in whether the person survived can be explained by their class and sex
+   - Any predictions on whether the passenger survived is going to deviate by `r summary(lm.fit)$sigma` units (on average). Hence, the _lack of fit_ of the model is about 0,38
+   - Overall, the model has an R-squared from `r summary(lm.fit)$r.sq`. This tells us that 39,4% of the variability in whether the person survived can be explained by their class and sex. 
+   - Compared to the R-sqaured without the interaction Term (`r summary(lm(alt.fit,data = titanic_train))$r.sq`), the model with the interaction Term predicts the response better 
 
 *** 
 ##### Fit a model containing the interactions between `Sex` and `age`. Interpret the coefficients.
 ```{r echo = FALSE}
-summary(lm("Survived~Age*Sex",data = titanic_train))
+summary(lm("Survived~Sex:Age",data = titanic_train))
 ```
 
 ***
 ##### Fit a model containing the interactions between `Sex`, `Pclass` and `age`. Interpret the coefficients.
 ```{r echo = FALSE}
-summary(lm("Survived~Pclass+Sex+Age",data = titanic_train))
+summary(lm("Survived~Pclass:Sex:Age",data = titanic_train))
 ```
    
