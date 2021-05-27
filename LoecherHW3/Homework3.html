@@ -181,6 +181,60 @@ pre code {
 <li>Read chapters 3.1, 3.2.1, 3.3.1</li>
 <li>Reproduce Lab Exercises 3.6.4 (Interaction Terms) and 3.6.6 (Qualitative Predictors)</li>
 </ul>
+<pre class="r"><code># 3.6.4 Interaction Terms
+summary (lm(&quot;medv~lstat*age&quot; ,data=Boston ))</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = &quot;medv~lstat*age&quot;, data = Boston)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -15.806  -4.045  -1.333   2.085  27.552 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 36.0885359  1.4698355  24.553  &lt; 2e-16 ***
+## lstat       -1.3921168  0.1674555  -8.313 8.78e-16 ***
+## age         -0.0007209  0.0198792  -0.036   0.9711    
+## lstat:age    0.0041560  0.0018518   2.244   0.0252 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 6.149 on 502 degrees of freedom
+## Multiple R-squared:  0.5557, Adjusted R-squared:  0.5531 
+## F-statistic: 209.3 on 3 and 502 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code># 3.6.6 Qualitative Predictors
+summary(lm(Sales ~ . +Income :Advertising +Price :Age ,data=Carseats ))</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Sales ~ . + Income:Advertising + Price:Age, data = Carseats)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -2.9208 -0.7503  0.0177  0.6754  3.3413 
+## 
+## Coefficients:
+##                      Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)         6.5755654  1.0087470   6.519 2.22e-10 ***
+## CompPrice           0.0929371  0.0041183  22.567  &lt; 2e-16 ***
+## Income              0.0108940  0.0026044   4.183 3.57e-05 ***
+## Advertising         0.0702462  0.0226091   3.107 0.002030 ** 
+## Population          0.0001592  0.0003679   0.433 0.665330    
+## Price              -0.1008064  0.0074399 -13.549  &lt; 2e-16 ***
+## ShelveLocGood       4.8486762  0.1528378  31.724  &lt; 2e-16 ***
+## ShelveLocMedium     1.9532620  0.1257682  15.531  &lt; 2e-16 ***
+## Age                -0.0579466  0.0159506  -3.633 0.000318 ***
+## Education          -0.0208525  0.0196131  -1.063 0.288361    
+## UrbanYes            0.1401597  0.1124019   1.247 0.213171    
+## USYes              -0.1575571  0.1489234  -1.058 0.290729    
+## Income:Advertising  0.0007510  0.0002784   2.698 0.007290 ** 
+## Price:Age           0.0001068  0.0001333   0.801 0.423812    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 1.011 on 386 degrees of freedom
+## Multiple R-squared:  0.8761, Adjusted R-squared:  0.8719 
+## F-statistic:   210 on 13 and 386 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 <div id="excercise" class="section level4">
 <h4>2. Excercise</h4>
@@ -210,10 +264,25 @@ pre code {
 <div id="interpretation" class="section level6">
 <h6>Interpretation:</h6>
 <ul>
-<li>The P values for all Coefficients are very small, which indicates a relationship between the choosen predictor (<code>Pclass</code> <code>Sex</code>) and the response <code>Survived</code><br />
+<li>The p-value for <code>Pclass</code> and <code>Sex</code>are significant which indicates a relationship between the choosen predictor and the response <code>Survived</code></li>
+<li>The p-values for the interaction term <code>Pclass:Sex</code> is significant, which indicates a relationship between the choosen predictor and the response <code>Survived</code><br />
 </li>
-<li>Any predictions on wether the passenger survived is going to deviate by 0.38 units (on average). The <em>lack of fit</em> of the model is 0.38</li>
-<li>Overall, the model has an R-squared from 0.3806. This tells us that 38.06% of the variability in whether the person survived can be explained by their class and sex</li>
+<li>If the passenger is female, the survivability can be predicted with</li>
+</ul>
+<p><span class="math display">\[\begin{align*}
+   &amp;\beta_{0}+\beta_{1} \times {Pclass}_{i} \\
+   &amp;= 1,27 -0,24\times {Pclass}_{i} 
+   \end{align*}\]</span></p>
+<p>However, if the passenger is male, the survivability is predicted by</p>
+<p><span class="math display">\[\begin{align*}
+   &amp; \left ( \beta_{0}+\beta_{2}  \right ) + \left ( \beta_{1}+\beta_{3}  \right )\times {Pclass}_{i} \\
+   &amp;  =  \left ( 1,27-0,83 \right )+\left ( -0,24-0,83 \right )\times {Pclass}_{i} \\
+   &amp; = 0,44-1,07 \times {Pclass}_{i} \\
+   \end{align*}\]</span></p>
+<ul>
+<li>Any predictions on whether the passenger survived is going to deviate by 0.3836113 units (on average). Hence, the <em>lack of fit</em> of the model is about 0.38</li>
+<li>Overall, the model has an R-squared from 0.3805793. This tells us that 38.06% of the variability in whether the person survived can be explained by their class and sex.</li>
+<li>Compared to the R-sqaured without the interaction Term (0.3676802), the model with the interaction Term predicts the response better</li>
 </ul>
 <hr />
 </div>
@@ -222,7 +291,7 @@ pre code {
 <h5>Fit a model containing the interactions between <code>Sex</code> and <code>age</code>. Interpret the coefficients.</h5>
 <pre><code>## 
 ## Call:
-## lm(formula = &quot;Survived~Age*Sex&quot;, data = titanic_train)
+## lm(formula = &quot;Survived~Sex*Age&quot;, data = titanic_train)
 ## 
 ## Residuals:
 ##     Min      1Q  Median      3Q     Max 
@@ -231,9 +300,9 @@ pre code {
 ## Coefficients:
 ##              Estimate Std. Error t value Pr(&gt;|t|)    
 ## (Intercept)  0.655775   0.056616  11.583  &lt; 2e-16 ***
-## Age          0.003547   0.001811   1.959  0.05053 .  
 ## Sexmale     -0.349223   0.072288  -4.831 1.67e-06 ***
-## Age:Sexmale -0.006842   0.002241  -3.053  0.00235 ** 
+## Age          0.003547   0.001811   1.959  0.05053 .  
+## Sexmale:Age -0.006842   0.002241  -3.053  0.00235 ** 
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
@@ -247,25 +316,29 @@ pre code {
 <h5>Fit a model containing the interactions between <code>Sex</code>, <code>Pclass</code> and <code>age</code>. Interpret the coefficients.</h5>
 <pre><code>## 
 ## Call:
-## lm(formula = &quot;Survived~Pclass+Sex+Age&quot;, data = titanic_train)
+## lm(formula = &quot;Survived~Pclass*Sex*Age&quot;, data = titanic_train)
 ## 
 ## Residuals:
 ##      Min       1Q   Median       3Q      Max 
-## -1.11224 -0.25417 -0.06352  0.22700  1.00737 
+## -1.05944 -0.22727 -0.09276  0.23385  0.98135 
 ## 
 ## Coefficients:
-##              Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)  1.326066   0.062606  21.181  &lt; 2e-16 ***
-## Pclass      -0.202916   0.018891 -10.741  &lt; 2e-16 ***
-## Sexmale     -0.479293   0.030671 -15.627  &lt; 2e-16 ***
-## Age         -0.005453   0.001082  -5.042 5.86e-07 ***
+##                     Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)         1.280717   0.159662   8.021 4.35e-15 ***
+## Pclass             -0.219673   0.065366  -3.361 0.000819 ***
+## Sexmale            -0.426693   0.216231  -1.973 0.048849 *  
+## Age                 0.001183   0.004540   0.261 0.794547    
+## Pclass:Sexmale      0.030155   0.086857   0.347 0.728561    
+## Pclass:Age         -0.001984   0.002058  -0.964 0.335354    
+## Sexmale:Age        -0.009967   0.005755  -1.732 0.083742 .  
+## Pclass:Sexmale:Age  0.002936   0.002561   1.147 0.251963    
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
-## Residual standard error: 0.3846 on 710 degrees of freedom
+## Residual standard error: 0.3801 on 706 degrees of freedom
 ##   (177 observations deleted due to missingness)
-## Multiple R-squared:  0.3902, Adjusted R-squared:  0.3876 
-## F-statistic: 151.4 on 3 and 710 DF,  p-value: &lt; 2.2e-16</code></pre>
+## Multiple R-squared:  0.4078, Adjusted R-squared:  0.4019 
+## F-statistic: 69.45 on 7 and 706 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
 
