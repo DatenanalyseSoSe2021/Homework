@@ -267,9 +267,8 @@ summary(lm(Sales ~ . +Income :Advertising +Price :Age ,data=Carseats ))</code></
 <div id="interpretation" class="section level6">
 <h6>Interpretation:</h6>
 <ul>
-<li>Any predictions on whether the passenger survived is going to deviate by 0.38 units (on average). Hence, the <em>lack of fit</em> of the model is about 0,38</li>
-<li>Overall, the model has an R-squared from 0.394. This tells us that 39,4% of the variability in whether the person survived can be explained by their class and sex.</li>
-<li>Compared to the R-sqaured without the interaction Term (0.368), the model with the interaction Term predicts the response better</li>
+<li>Any predictions on whether the passenger survived is going to deviate by 0.38 units (on average).</li>
+<li>Overall, the model has an R-squared of 0.394. This tells us that 39.36% of the variability in whether the person survived can be explained by this model.</li>
 </ul>
 <hr />
 </div>
@@ -296,7 +295,14 @@ summary(lm(Sales ~ . +Income :Advertising +Price :Age ,data=Carseats ))</code></
 ##   (177 observations deleted due to missingness)
 ## Multiple R-squared:  0.277,  Adjusted R-squared:  0.275 
 ## F-statistic:  136 on 2 and 711 DF,  p-value: &lt;2e-16</code></pre>
+<div id="interpretation-1" class="section level6">
+<h6>Interpretation:</h6>
+<ul>
+<li>Any predictions on whether the passenger survived is going to deviate by 0.418 units (on average).</li>
+<li>Overall, the model has an R-squared of 0.277. This tells us that 27.73% of the variability in whether the person survived can be explained by this model.</li>
+</ul>
 <hr />
+</div>
 </div>
 <div id="fit-a-model-containing-the-interactions-between-sex-pclass-and-age.-interpret-the-coefficients." class="section level5">
 <h5>Fit a model containing the interactions between <code>Sex</code>, <code>Pclass</code> and <code>age</code>. Interpret the coefficients.</h5>
@@ -324,6 +330,13 @@ summary(lm(Sales ~ . +Income :Advertising +Price :Age ,data=Carseats ))</code></
 ##   (177 observations deleted due to missingness)
 ## Multiple R-squared:  0.386,  Adjusted R-squared:  0.381 
 ## F-statistic: 74.2 on 6 and 707 DF,  p-value: &lt;2e-16</code></pre>
+<div id="interpretation-2" class="section level6">
+<h6>Interpretation:</h6>
+<ul>
+<li>Any predictions on whether the passenger survived is going to deviate by 0.387 units (on average).</li>
+<li>Overall, the model has an R-squared of 0.386. This tells us that 38.64% of the variability in whether the person survived can be explained by this model.</li>
+</ul>
+</div>
 </div>
 </div>
 
