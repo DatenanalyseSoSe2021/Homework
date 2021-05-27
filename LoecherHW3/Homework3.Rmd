@@ -29,45 +29,33 @@ summary(lm(Sales ~ . +Income :Advertising +Price :Age ,data=Carseats ))
 
 #### 2. Excercise 
 Load the `titanic` library and the `titanic_train` data. In the following we use `Survived` as the outcome (y):
+```{r echo = FALSE}
+options(digits = 3)
+titanic_train$Pclass = as.factor(titanic_train$Pclass)
+```
 
 ##### Fit a model containing the interactions between `Sex` and `Pclass`. Interpret the coefficients.
 ```{r echo = FALSE}
 alt.fit = "Survived~Pclass+Sex"
-lm.fit=lm("Survived~Pclass*Sex",data = titanic_train)
+lm.fit=lm("Survived~Pclass:Sex",data = titanic_train)
 summary(lm.fit)
+
 ```
 
 ###### Interpretation: 
-   - The p-value for `Pclass` and `Sex`are significant which indicates a relationship between the choosen predictor and the response `Survived` 
-   - The p-values for the interaction term `Pclass:Sex` is significant, which indicates a  relationship between the choosen predictor and the response `Survived`  
-   - If the passenger is female, the survivability can be predicted with 
-   
-   $$\begin{align*}
-   &\beta_{0}+\beta_{1} \times {Pclass}_{i} \\
-   &= 1,27 -0,24\times {Pclass}_{i} 
-   \end{align*}$$ 
-   
-   However, if the passenger is male, the survivability is predicted by 
-   
-   $$\begin{align*}
-   & \left ( \beta_{0}+\beta_{2}  \right ) + \left ( \beta_{1}+\beta_{3}  \right )\times {Pclass}_{i} \\
-   &  =  \left ( 1,27-0,83 \right )+\left ( -0,24-0,83 \right )\times {Pclass}_{i} \\
-   & = 0,44-1,07 \times {Pclass}_{i} \\
-   \end{align*}$$
-   
-   - Any predictions on whether the passenger survived is going to deviate by `r summary(lm.fit)$sigma` units (on average). Hence, the _lack of fit_ of the model is about 0.38
-   - Overall, the model has an R-squared from `r summary(lm.fit)$r.sq`. This tells us that 38.06% of the variability in whether the person survived can be explained by their class and sex. 
+   - Any predictions on whether the passenger survived is going to deviate by `r summary(lm.fit)$sigma` units (on average). Hence, the _lack of fit_ of the model is about 0,38
+   - Overall, the model has an R-squared from `r summary(lm.fit)$r.sq`. This tells us that 39,4% of the variability in whether the person survived can be explained by their class and sex. 
    - Compared to the R-sqaured without the interaction Term (`r summary(lm(alt.fit,data = titanic_train))$r.sq`), the model with the interaction Term predicts the response better 
 
 *** 
 ##### Fit a model containing the interactions between `Sex` and `age`. Interpret the coefficients.
 ```{r echo = FALSE}
-summary(lm("Survived~Sex*Age",data = titanic_train))
+summary(lm("Survived~Sex:Age",data = titanic_train))
 ```
 
 ***
 ##### Fit a model containing the interactions between `Sex`, `Pclass` and `age`. Interpret the coefficients.
 ```{r echo = FALSE}
-summary(lm("Survived~Pclass*Sex*Age",data = titanic_train))
+summary(lm("Survived~Pclass:Sex:Age",data = titanic_train))
 ```
    
