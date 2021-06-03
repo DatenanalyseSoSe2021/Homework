@@ -10,7 +10,7 @@ library(ISLR)
 data(Smarket)
 ```
 
-*This homework is the absolute minimum extra work that you need to invest to keep up with the material in this course.*
+**This homework is the absolute minimum extra work that you need to invest to keep up with the material in this course.**
 
 ## 1. Review your understanding of **logistic regression**
    * Read chapters 4.1, 4.2, 4.3.1-4.3.4 
@@ -131,8 +131,12 @@ Compared to the baseline, the odds of a HS Grad to get a job in the information 
 
 #### What is the probability of a person with an advanced degree of being in the Information category of jobs ?
 ```{r}
+# Manual Calculation
 Odds = exp(coef((Wage.fit))[1]+coef(Wage.fit)[5])
-#Probability 
+##Probability 
 unname(Odds/(1+Odds))
+
+# Using Predict
+predict(Wage.fit, newdata = data.frame(education = factor("5. Advanced Degree") ), type ="response" )
 ```
 
