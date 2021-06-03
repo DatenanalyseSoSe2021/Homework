@@ -1,0 +1,138 @@
+---
+title: "Homework IV, due June 3rd"
+author: "M Loecher"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ISLR)
+data(Smarket)
+```
+
+*This homework is the absolute minimum extra work that you need to invest to keep up with the material in this course.*
+
+## 1. Review your understanding of **logistic regression**
+   * Read chapters 4.1, 4.2, 4.3.1-4.3.4 
+   * Reproduce Lab Exercises 4.6.1 and 4.6.2 
+
+### Lab session 4.6.1 
+
+```{r, collapse = TRUE}
+names(Smarket)
+dim(Smarket)
+summary(Smarket)
+```
+```{r}
+cor(Smarket[,-9])
+```
+```{r}
+attach(Smarket)
+plot(Volume)
+```
+
+### Lab session 4.6.2
+```{r}
+glm.fit = glm(Direction ~ Lag1+Lag2+Lag3+Lag4+Lag5+Volume, data=Smarket, family =binomial)
+summary(glm.fit)
+```
+
+```{r, collapse = TRUE}
+# Accessing just the coefficients
+coef(glm.fit)
+# Accessing particular values in Summary
+summary(glm.fit)$coef
+## Access p Values only
+summary(glm.fit )$coef [,4]
+```
+
+```{r, collapse = TRUE}
+glm.probs = predict(
+  glm.fit,
+  type = "response" #Output it in P(Y=1|X)
+  )
+# Show first 10 probabilities
+glm.probs[1:10] 
+# prove that the predict correspond to the probs of the market going up (Y = Up = 1)
+contrasts (Direction)
+```
+
+```{r}
+# Make prediction on going down
+## Create a vector w 1250 elements with "Down"
+glm.pred = rep("Down",1250)
+## Change to "Up" when pred value is >0.5
+glm.pred[glm.probs >.5] = "Up"
+
+# output result as table matrix to determine evaluate prediction
+table(glm.pred, Direction)
+## mean to output the fraction of correctly predicted days 
+mean(glm.pred == Direction)
+```
+
+```{r, collapse = TRUE}
+# optimise training error rate
+train = (Year<2005)
+## Create subset for 2005
+Smarket.2005 = Smarket [! train ,]
+dim(Smarket.2005)
+
+## create vector w directions in 2005
+Direction.2005= Direction [! train]
+
+# Create Model using subset data
+glm.fit=glm(Direction ~ Lag1+Lag2+Lag3+Lag4+Lag5+Volume, data=Smarket, family=binomial, subset=train)
+## Obtain Probabilities
+glm.probs =predict (glm.fit, Smarket.2005, type="response" )
+
+# Compute predictions for 2005 
+glm.pred=rep ("Down" ,252)
+glm.pred[glm.probs > .5]= "Up"
+
+# Evaluate predictions
+table(glm.pred ,Direction.2005)
+## Correct Predictions
+mean(glm.pred == Direction.2005)
+## Incorrect Predictions 
+mean(glm.pred != Direction.2005)
+```
+```{r, collapse=TRUE}
+# refit the model using only Lag1 and Lag2
+glm.fit=glm(Direction ~ Lag1+Lag2, data=Smarket, family=binomial, subset=train)
+glm.probs =predict (glm.fit, Smarket.2005, type="response" )
+glm.pred=rep ("Down" ,252)
+glm.pred[glm.probs > .5]= "Up"
+table(glm.pred ,Direction.2005)
+## Correct Predictions
+mean(glm.pred == Direction.2005)
+## Accuracy on predicting Up
+106/(106+76)
+```
+Suppose that we want to predict the returns associated with particular values of `Lag1` and `Lag2`. In particular, we want to predict Direction on a day when `Lag1` and `Lag2` equal 1.2 and 1.1, respectively, and on a day when they equal 1.5 and −0.8. We do this using the `predict()` function.
+```{r}
+predict(glm.fit, newdata = data.frame(Lag1=c(1.2 ,1.5), Lag2=c(1.1 , -0.8) ), type ="response" )
+```
+
+### 2. Load the Wage data from the ISLR library and define a new column
+```{r}
+data(Wage)
+Wage$Information__job = Wage$jobclass == "2. Information"
+```
+#### Fit a logistic regression modeling `Information__job` as a function of education.
+```{r}
+attach(Wage)
+Wage.fit = glm(Information__job~education, family = binomial)
+summary(Wage.fit)
+contrasts(Information__job)
+```
+#### Compared to the baseline: by what (multiplicative) factor are the odds of a HS Grad defaulting higher or lower of being in the Information category of jobs ?
+
+Compared to the baseline, the odds of a HS Grad to get a job in the information category are *increased* by a factor of `r exp(0.2492)`
+
+#### What is the probability of a person with an advanced degree of being in the Information category of jobs ?
+```{r}
+Odds = exp(coef((Wage.fit))[1]+coef(Wage.fit)[5])
+#Probability 
+unname(Odds/(1+Odds))
+```
+
