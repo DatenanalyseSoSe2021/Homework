@@ -170,7 +170,7 @@ pre code {
 </div>
 
 
-<p><em>This homework is the absolute minimum extra work that you need to invest to keep up with the material in this course.</em></p>
+<p><strong>This homework is the absolute minimum extra work that you need to invest to keep up with the material in this course.</strong></p>
 <div id="review-your-understanding-of-logistic-regression" class="section level2">
 <h2>1. Review your understanding of <strong>logistic regression</strong></h2>
 <ul>
@@ -408,10 +408,15 @@ summary(Wage.fit)</code></pre>
 </div>
 <div id="what-is-the-probability-of-a-person-with-an-advanced-degree-of-being-in-the-information-category-of-jobs" class="section level4">
 <h4>What is the probability of a person with an advanced degree of being in the Information category of jobs ?</h4>
-<pre class="r"><code>Odds = exp(coef((Wage.fit))[1]+coef(Wage.fit)[5])
-#Probability 
+<pre class="r"><code># Manual Calculation
+Odds = exp(coef((Wage.fit))[1]+coef(Wage.fit)[5])
+##Probability 
 unname(Odds/(1+Odds))</code></pre>
 <pre><code>## [1] 0.7605634</code></pre>
+<pre class="r"><code># Using Predict
+predict(Wage.fit, newdata = data.frame(education = factor(&quot;5. Advanced Degree&quot;) ), type =&quot;response&quot; )</code></pre>
+<pre><code>##         1 
+## 0.7605634</code></pre>
 </div>
 </div>
 </div>
