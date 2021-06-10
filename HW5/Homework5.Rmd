@@ -1,0 +1,121 @@
+---
+title: "Homework V, due June 10th"
+author:
+- M Loecher
+- Yilun Liu
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(mlbench)
+library(pROC)
+# Load Data
+data(PimaIndiansDiabetes)
+```
+
+#### This homework is the absolute minimum extra work that you need to invest to keep up with the material in this course.
+
+1. Learn about **ROC curves** using the book [An Introduction to Statistical Learning](http://faculty.marshall.usc.edu/gareth-james/ISL/)
+   * Read pages 145-149
+
+2. Load the `mlbench` library and the `PimaIndiansDiabetes` data. In the following we use `diabetes` as the outcome (y):
+   * Fit a logistic regression containing all variables.
+   * Compute and plot the ROC curve (using your own code).
+   * Repeat the above using the library `pROC`. In addition, compute the *AUC* score. 
+   * Can you find interaction terms that improve the *AUC* score ?
+   
+##### Set Up
+```{r Set Up}
+# Logistic Regression
+DM.glm = glm(formula = diabetes ~ ., family= binomial, data = PimaIndiansDiabetes )
+#optional:
+summary(DM.glm)
+
+```
+
+##### My.ROC
+Calculate True and False Postive Rates by threshhold and store in dataframe
+```{r}
+#get odds for each row 
+DM.odds = predict(DM.glm, newdata = PimaIndiansDiabetes, type = "response")
+
+#generate threshhold array
+threshholds = seq(from = 0, to = 1, by = 0.005)
+
+#Extract actual Results from Dataset
+## Total positive and negatives
+Total.P = sum(PimaIndiansDiabetes$diabetes == "pos")
+Total.N = sum(PimaIndiansDiabetes$diabetes == "neg") 
+## Convert factor to boolean and store result 
+DM.actResult = PimaIndiansDiabetes$diabetes == "pos"
+
+#initialize Dataframe
+ROC.data = data.frame(
+  Threshhold = double(),
+  TPR = double(),
+  FPR = double()
+)
+for (i in 1:length(threshholds)){
+#get classification by current threshhold
+DM.preds = threshholds[i]<DM.odds
+#create confusion Matrix
+DM.cm = table(DM.actResult,DM.preds)
+#calculate TPR
+TPR = 
+  ifelse( 
+    #handle no TRUE classifications
+    ncol(DM.cm) == 2,
+    DM.cm["TRUE","TRUE"],
+    0
+    )/Total.P
+#calculate FPR
+FPR = 
+  ifelse(
+    #handle no FALSE classifications
+    ncol(DM.cm) == 2,
+    DM.cm["FALSE","TRUE"],
+    0
+    )/Total.N
+#populate Dataframe
+ROC.data[i,] = c(threshholds[i],TPR,FPR)
+}
+
+```
+Plot Data:
+```{r}
+library(ggplot2)
+ggplot(data = ROC.data, mapping = aes(FPR,TPR))+
+  ggtitle("ROC Curve")+xlab("False Positive Rate")+ylab("True Positive Rate")+
+  geom_line(color = "dark blue") +
+  geom_abline(intercept = 0,linetype = "dashed")
+```
+
+##### pROC
+```{r}
+DM.ROC = roc(formula = DM.glm$y ~ DM.glm$fitted.values)
+plot(DM.ROC,legacy.axes = TRUE)
+auc(DM.ROC)
+```
+
+
+
+#### Finding interaction terms that improve AUC
+
+##### AUC with a model that includes every possible interaction term 
+```{r}
+DM.glm1 = glm(formula = diabetes ~ .^2, family= binomial, data = PimaIndiansDiabetes )
+summary(DM.glm1)
+DM.ROC1 = roc(formula = DM.glm1$y ~ DM.glm1$fitted.values)
+auc(DM.ROC1)
+```
+
+based on the significance coding, i've decided to contain `pregnant:age` and `triceps:pedigree`. However this results in an AUC lower than the Model with every possible intercation:
+
+```{r}
+DM.glm2 = update(DM.glm, ~.+pregnant : age+triceps : pedigree)
+DM.ROC2 = roc(formula = DM.glm2$y ~ DM.glm2$fitted.values)
+auc(DM.ROC2)
+```
+
