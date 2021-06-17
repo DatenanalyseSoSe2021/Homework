@@ -20,22 +20,39 @@ knitr::opts_chunk$set(echo = TRUE)
 ##### My Function
 ```{r}
 my.cv.glm = function(formula, data, k, family = gaussian){
+
+  #get response column name 
+  response = as.character(
+    terms(
+      as.formula(formula), # Handle formula input as string
+      data = data # Handle formula with .
+      )[[2]]
+  )
+  
   #init Output
   cv.err = rep(0,k)
   names(cv.err)=1:k
   
-  # Create k equally sized folds
+  # Create an vector of index with k equally sized folds 
   folds = cut(1:nrow(data),breaks = k,labels = FALSE)
+  
   # randomize dataset
+  set.seed(123)
   data=data[sample(nrow(data)),]
+  
   #Perform k fold cross validation 
   for(i in 1:k){
-    testIndexes = which(folds==i,arr.ind=TRUE)
-    trainData = data[-testIndexes, ]
+    #assign train Data 
+    trainIndexes = which(folds!=i,arr.ind=FALSE)
+    trainData = data[trainIndexes, ]
+    
     #Use trainData to fit the model 
-    fit.glm = glm(formula = formula, data = trainData, family = family)
-    #Store RSS of the fit
-    cv.err[i] = sum(fit.glm$residual^2)
+    fit.glm = glm(formula = formula, data = trainData,  family = family)
+    
+    #calculate MSE and save result
+    cv.err[i] = mean(
+      (data[,response]-predict(fit.glm, newdata = data))[-trainIndexes]^2, na.rm = TRUE
+    )
   }
   return(cv.err)
 }
@@ -44,24 +61,26 @@ my.cv.glm = function(formula, data, k, family = gaussian){
 
 ###### Function Testing
 ```{r}
-# gerating random data
+#using titanic data 
+library(titanic)
+data("titanic_train")
+#formula of class formula 
+my.cv.glm(Survived ~ Pclass+Sex+Age, data = titanic_train,k=5)
+#formula as string
+my.cv.glm("Survived ~ Pclass+Sex+Age", data = titanic_train,k=5)
+```
+
+```{r}
+# generating random data
 set.seed(12345)
 n = 1000
 x = rnorm(n) 
 y = ifelse(pnorm(1 + 0.5 * x + rnorm(n)) > 0.5, 1, 0)
 my.data = data.frame(y, x)
-
-(my.data.RSSs = my.cv.glm(y~x,data=my.data,k = 10))
-mean(my.data.RSSs)
-
+## testing .
+my.cv.glm(y~.,data=my.data,k = 10)
 ```
 
-```{r}
-#using titanic data 
-library(titanic)
-data("titanic_train")
-(titanic.RSSs = my.cv.glm(Survived ~ Pclass+Sex+Age, data = titanic_train,k=5, family= binomial))
-mean(titanic.RSSs)
 
-```
+
 
