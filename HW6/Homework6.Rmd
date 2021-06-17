@@ -1,0 +1,67 @@
+---
+title: "Homework VI, due June 17th"
+author:
+- M Loecher
+- Yilun Liu
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#### This homework is the absolute minimum extra work that you need to invest to keep up with the material in this course.
+
+1. Learn about **Cross Validation** using the book [An Introduction to Statistical Learning](https://westminster.instructure.com/courses/2915670/files/172215801) (formerly at http://faculty.marshall.usc.edu/gareth-james/ISL/)
+   * Read chapter 5.1
+
+2. Write your own cross validation code ! The function should take as input the formula and data used to fit the model, the number of folds ($k$) and return the vector of $k$ losses (i.e. either RSS or deviance):
+
+##### My Function
+```{r}
+my.cv.glm = function(formula, data, k, family = gaussian){
+  #init Output
+  cv.err = rep(0,k)
+  names(cv.err)=1:k
+  
+  # Create k equally sized folds
+  folds = cut(1:nrow(data),breaks = k,labels = FALSE)
+  # randomize dataset
+  data=data[sample(nrow(data)),]
+  #Perform k fold cross validation 
+  for(i in 1:k){
+    testIndexes = which(folds==i,arr.ind=TRUE)
+    trainData = data[-testIndexes, ]
+    #Use trainData to fit the model 
+    fit.glm = glm(formula = formula, data = trainData, family = family)
+    #Store RSS of the fit
+    cv.err[i] = sum(fit.glm$residual^2)
+  }
+  return(cv.err)
+}
+
+```
+
+###### Function Testing
+```{r}
+# gerating random data
+set.seed(12345)
+n = 1000
+x = rnorm(n) 
+y = ifelse(pnorm(1 + 0.5 * x + rnorm(n)) > 0.5, 1, 0)
+my.data = data.frame(y, x)
+
+(my.data.RSSs = my.cv.glm(y~x,data=my.data,k = 10))
+mean(my.data.RSSs)
+
+```
+
+```{r}
+#using titanic data 
+library(titanic)
+data("titanic_train")
+(titanic.RSSs = my.cv.glm(Survived ~ Pclass+Sex+Age, data = titanic_train,k=5, family= binomial))
+mean(titanic.RSSs)
+
+```
+
