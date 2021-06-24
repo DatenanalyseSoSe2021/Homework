@@ -1,0 +1,48 @@
+---
+title: "Homework VII a, due June 24th"
+author: 
+- M Loecher
+- Yilun Liu
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(glmnet)
+```
+
+#### This homework is the absolute minimum extra work that you need to invest to keep up with the material in this course.
+
+1. Learn about **L1/L2 Regression** and the elastic net using the book [An Introduction to Statistical Learning](https://westminster.instructure.com/courses/2915670/files/172215801) (formerly at http://faculty.marshall.usc.edu/gareth-james/ISL/)
+   * Read chapter 6.2
+
+2. Read the heart data set (https://web.stanford.edu/~hastie/ElemStatLearn//datasets/SAheart.info.txt) into R.
+   * Add 10 random columns
+   * Find the optimum value for $\alpha$ which results in the minimum cross validated deviance for the regularized logistic regression `chd ~ ., data=heart` 
+
+```{r, eval = TRUE}
+heart = read.table("http://www-stat.stanford.edu/~tibs/ElemStatLearn/datasets/SAheart.data", sep=",", head=T,row.names=1)
+# Add 10 random columns
+set.seed(123)
+heart = cbind(heart,matrix(sample(100,nrow(heart)*10,replace = TRUE),ncol = 10))
+
+#Init params for glmnet
+x = model.matrix(chd~.,heart)[,-1]
+y = heart$chd
+```
+
+
+```{r}
+# find best lambda
+## for ridge regression
+bestlam.r = cv.glmnet(x, y, alpha = 0)$lambda.min
+## for lasso regression
+bestlam.l = cv.glmnet(x, y, alpha = 1)$lambda.min
+
+# optimzed alpha
+bestalpha = bestlam.l/(bestlam.l+2*bestlam.r)
+cat("Best alpha:",round(bestalpha,2))
+```
+
+
+
