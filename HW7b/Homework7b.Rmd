@@ -47,7 +47,7 @@ gini.calc = function(x,var,col=x[,var],n=nrow(x),isBinary = length(unique(col)) 
       },
       numeric(1)
     )
-    temp = cbind(.class,.gini)
+    temp = cbind(.class,.gini)[-1,]
     colnames(temp) = c(paste(var,"<"),"Gini Index")
     max.gini=temp[which.max(temp[,2]),]
     min.gini=temp[which.min(temp[,2]),]
@@ -67,6 +67,7 @@ gini.calc(heart,"typea")
 gini.calc(heart,"obesity")
 gini.calc(heart,"alcohol")
 gini.calc(heart,"age")
+gini.calc(heart,"famhist")
 ```
 
 

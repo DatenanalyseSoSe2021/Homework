@@ -207,7 +207,7 @@ gini.calc = function(x,var,col=x[,var],n=nrow(x),isBinary = length(unique(col)) 
       },
       numeric(1)
     )
-    temp = cbind(.class,.gini)
+    temp = cbind(.class,.gini)[-1,]
     colnames(temp) = c(paste(var,&quot;&lt;&quot;),&quot;Gini Index&quot;)
     max.gini=temp[which.max(temp[,2]),]
     min.gini=temp[which.min(temp[,2]),]
@@ -216,37 +216,39 @@ gini.calc = function(x,var,col=x[,var],n=nrow(x),isBinary = length(unique(col)) 
   }
 }</code></pre>
 <pre class="r"><code>gini.calc(heart,&quot;sbp&quot;)</code></pre>
-<pre><code>##          sbp &lt; Gini Index
-## max.gini   136  0.2494331
-## min.gini   101  0.0000000</code></pre>
+<pre><code>##          sbp &lt;  Gini Index
+## max.gini   136 0.249433107
+## min.gini   218 0.002159817</code></pre>
 <pre class="r"><code>gini.calc(heart,&quot;tobacco&quot;)</code></pre>
-<pre><code>##          tobacco &lt; Gini Index
-## max.gini         2  0.2499813
-## min.gini         0  0.0000000</code></pre>
+<pre><code>##          tobacco &lt;  Gini Index
+## max.gini       2.0 0.249981260
+## min.gini      31.2 0.002159817</code></pre>
 <pre class="r"><code>gini.calc(heart,&quot;ldl&quot;)</code></pre>
-<pre><code>##          ldl &lt; Gini Index
-## max.gini  4.34  0.2499953
-## min.gini  0.98  0.0000000</code></pre>
+<pre><code>##          ldl &lt;  Gini Index
+## max.gini  4.34 0.249995315
+## min.gini 15.33 0.002159817</code></pre>
 <pre class="r"><code>gini.calc(heart,&quot;adiposity&quot;)</code></pre>
-<pre><code>##          adiposity &lt; Gini Index
-## max.gini       26.13       0.25
-## min.gini        6.74       0.00</code></pre>
+<pre><code>##          adiposity &lt;  Gini Index
+## max.gini       26.13 0.250000000
+## min.gini       42.49 0.002159817</code></pre>
 <pre class="r"><code>gini.calc(heart,&quot;typea&quot;)</code></pre>
-<pre><code>##          typea &lt; Gini Index
-## max.gini      54  0.2499813
-## min.gini      13  0.0000000</code></pre>
+<pre><code>##          typea &lt;  Gini Index
+## max.gini      54 0.249981260
+## min.gini      78 0.002159817</code></pre>
 <pre class="r"><code>gini.calc(heart,&quot;obesity&quot;)</code></pre>
-<pre><code>##          obesity &lt; Gini Index
-## max.gini     25.81       0.25
-## min.gini     14.70       0.00</code></pre>
+<pre><code>##          obesity &lt;  Gini Index
+## max.gini     25.81 0.250000000
+## min.gini     46.58 0.002159817</code></pre>
 <pre class="r"><code>gini.calc(heart,&quot;alcohol&quot;)</code></pre>
-<pre><code>##          alcohol &lt; Gini Index
-## max.gini      7.61       0.25
-## min.gini      0.00       0.00</code></pre>
+<pre><code>##          alcohol &lt;  Gini Index
+## max.gini      7.61 0.250000000
+## min.gini    147.19 0.002159817</code></pre>
 <pre class="r"><code>gini.calc(heart,&quot;age&quot;)</code></pre>
-<pre><code>##          age &lt; Gini Index
-## max.gini    45   0.249925
-## min.gini    15   0.000000</code></pre>
+<pre><code>##          age &lt;  Gini Index
+## max.gini    45 0.249925039
+## min.gini    16 0.006451341</code></pre>
+<pre class="r"><code>gini.calc(heart,&quot;famhist&quot;)</code></pre>
+<pre><code>## [1] 0.242874</code></pre>
 </div>
 
 
