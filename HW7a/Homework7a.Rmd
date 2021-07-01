@@ -24,7 +24,7 @@ library(glmnet)
 heart = read.table("http://www-stat.stanford.edu/~tibs/ElemStatLearn/datasets/SAheart.data", sep=",", head=T,row.names=1)
 # Add 10 random columns
 set.seed(123)
-heart = cbind(heart,matrix(sample(100,nrow(heart)*10,replace = TRUE),ncol = 10))
+heart = cbind(heart,matrix(rnorm(nrow(heart)*10),ncol = 10))
 
 #Init params for glmnet
 x = model.matrix(chd~.,heart)[,-1]
@@ -33,16 +33,21 @@ y = heart$chd
 
 
 ```{r}
-# find best lambda
-## for ridge regression
-bestlam.r = cv.glmnet(x, y, alpha = 0)$lambda.min
-## for lasso regression
-bestlam.l = cv.glmnet(x, y, alpha = 1)$lambda.min
-
-# optimzed alpha
-bestalpha = bestlam.l/(bestlam.l+2*bestlam.r)
-cat("Best alpha:",round(bestalpha,2))
+alpha.grid = seq(0,1,by = 0.05)
+foldid=sample(1:10,size=length(y),replace = TRUE)
+output = cbind(alpha.grid,0,0)
+colnames(output)=c("alpha","lambda","measure")
+for (i in 1:nrow(output)){
+  my.cv = cv.glmnet(x,y, alpha = alpha.grid[i], foldid = foldid)
+  output[i,2]=my.cv$lambda.min
+  output[i,3]=min(my.cv$cvm)
+}
+bestRow=which.min(output[,"measure"])
+plot(output[,"measure"]~output[,"alpha"])
+#best Alpha
+output[bestRow,]
 ```
+
 
 
 
